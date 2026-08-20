@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#ff6a00">
+
+  <title>SCAN OUTBOUND - H JOEL LOGISTICS</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f2f3f5;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #20252b;
+    }
+
+    .app {
+      max-width: 520px;
+      min-height: 100vh;
+      margin: auto;
+      background: #ffffff;
+    }
+
+    .header {
+      background: #ffffff;
+      padding: 18px 18px 14px;
+      text-align: center;
+      border-bottom: 4px solid #ff6a00;
+    }
+
+    .logo-wrap {
+      width: 100%;
+      max-width: 370px;
+      margin: auto;
+    }
+
+    .brand-logo {
+      width: 100%;
+      display: block;
+    }
+
+    .title {
+      margin-top: 12px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #747474;
+    }
+
+    .content {
+      padding: 18px;
+    }
+
+    .section-title {
+      margin: 5px 0 13px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      min-height: 49px;
+      border-radius: 9px;
+      font-size: 16px;
+    }
+
+    input,
+    select {
+      border: 1px solid #cfd2d6;
+      padding: 11px;
+      background: white;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #ff6a00;
+      box-shadow: 0 0 0 2px rgba(255,106,0,.12);
+    }
+
+    button {
+      border: none;
+      padding: 12px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .btn-orange {
+      background: #ff6a00;
+      color: white;
+    }
+
+    .btn-dark {
+      background: #20252b;
+      color: white;
+    }
+
+    .btn-red {
+      background: #d9342b;
+      color: white;
+    }
+
+    .btn-green {
+      background: #148c47;
+      color: white;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e8e8e8;
+      margin: 22px 0;
+    }
+
+    /* FOTO DRIVER */
+
+    #photoCameraBox {
+      display: none;
+      margin-top: 10px;
+    }
+
+    #photoVideo {
+      width: 100%;
+      max-height: 420px;
+      background: #111;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .photo-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    #photoPreviewBox {
+      display: none;
+      margin-top: 12px;
+      background: #f4f4f4;
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    #photoPreview {
+      width: 100%;
+      max-height: 350px;
+      object-fit: contain;
+      border-radius: 8px;
+      display: block;
+    }
+
+    /* SCANNER AWB */
+
+    #reader {
+      width: 100%;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #111;
+    }
+
+    .scan-buttons {
+      display: grid;
+      gap: 8px;
+    }
+
+    .counter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0 9px;
+      gap: 10px;
+    }
+
+    .counter {
+      background: #20252b;
+      color: white;
+      padding: 8px 13px;
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .clear {
+      width: auto;
+      min-height: 35px;
+      background: #eceeef;
+      color: #20252b;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .awb-list {
+      max-height: 280px;
+      overflow-y: auto;
+      background: #f5f6f7;
+      padding: 9px;
+      border-radius: 10px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 18px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .awb-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+    }
+
+    .awb-number {
+      flex: 1;
+      font-weight: bold;
+      font-size: 14px;
+      word-break: break-all;
+    }
+
+    .delete {
+      width: auto;
+      min-height: 32px;
+      background: #d9342b;
+      color: white;
+      font-size: 11px;
+      padding: 5px 8px;
+    }
+
+    /* STATUS */
+
+    .status {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 9px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .success {
+      display: block;
+      background: #e1f5e9;
+      color: #14723b;
+    }
+
+    .error {
+      display: block;
+      background: #fde5e3;
+      color: #b1261c;
+    }
+
+    .info {
+      display: block;
+      background: #fff0df;
+      color: #975300;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+
+    <div class="logo-wrap">
+
+      <!-- LOGO LANGSUNG TERTANAM DI HTML -->
+      <svg
+        class="brand-logo"
+        viewBox="0 0 760 210"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+
+        <!-- SIMBOL -->
+        <g transform="translate(20,20)">
+
+          <polygon
+            points="20,25 75,0 75,80 20,108"
+            fill="#ff7900"
+          />
+
+          <polygon
+            points="105,0 160,27 160,78 105,52"
+            fill="#ff7900"
+          />
+
+          <polygon
+            points="80,55 135,83 80,112 25,84"
+            fill="#ff7900"
+          />
+
+          <polygon
+            points="25,91 75,117 75,175 25,147"
+            fill="#20252b"
+          />
+
+          <polygon
+            points="105,92 160,63 160,145 105,175"
+            fill="#20252b"
+          />
+
+          <polygon
+            points="80,112 105,99 105,175 80,160"
+            fill="#34383d"
+          />
+
+        </g>
+
+        <!-- H JOEL -->
+        <text
+          x="235"
+          y="88"
+          font-family="Arial, Helvetica, sans-serif"
+          font-size="78"
+          font-weight="700"
+          letter-spacing="6"
+          fill="#20252b"
+        >
+          H JOEL
+        </text>
+
+        <!-- LOGISTICS -->
+        <line
+          x1="245"
+          y1="132"
+          x2="300"
+          y2="132"
+          stroke="#ff7900"
+          stroke-width="4"
+        />
+
+        <text
+          x="320"
+          y="145"
+          font-family="Arial, Helvetica, sans-serif"
+          font-size="34"
+          font-weight="500"
+          letter-spacing="10"
+          fill="#ff7900"
+        >
+          LOGISTICS
+        </text>
+
+        <line
+          x1="655"
+          y1="132"
+          x2="715"
+          y2="132"
+          stroke="#ff7900"
+          stroke-width="4"
+        />
+
+        <!-- TAGLINE -->
+        <text
+          x="245"
+          y="184"
+          font-family="Arial, Helvetica, sans-serif"
+          font-size="19"
+          letter-spacing="3"
+          fill="#60656b"
+        >
+          SOLUSI DISTRIBUSI TERPERCAYA
+        </text>
+
+      </svg>
+
+    </div>
+
+    <div class="title">
+      SCAN OUTBOUND
+    </div>
+
+    <div class="subtitle">
+      H JOEL LOGISTICS
+    </div>
+
+  </div>
+
+
+  <div class="content">
+
+    <div class="section-title">
+      INFORMASI PICK UP
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Tanggal Pick Up
+      </label>
+
+      <input
+        type="date"
+        id="tanggalPickup"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Nama Driver
+      </label>
+
+      <input
+        type="text"
+        id="namaDriver"
+        placeholder="Masukkan nama driver"
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Plat No
+      </label>
+
+      <input
+        type="text"
+        id="platNo"
+        placeholder="Contoh: F 1234 ABC"
+        autocomplete="off"
+        oninput="this.value=this.value.toUpperCase()"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Vendor
+      </label>
+
+      <select id="vendor">
+
+        <option value="">
+          Memuat Vendor...
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- FOTO DRIVER -->
+
+    <div class="section-title">
+      FOTO DRIVER
+    </div>
+
+
+    <button
+      type="button"
+      class="btn-orange"
+      id="btnOpenPhoto"
+      onclick="openPhotoCamera()"
+    >
+      📷 BUKA KAMERA DRIVER
+    </button>
+
+
+    <div id="photoCameraBox">
+
+      <video
+        id="photoVideo"
+        autoplay
+        playsinline
+        muted
+      ></video>
+
+
+      <div class="photo-actions">
+
+        <button
+          type="button"
+          class="btn-green"
+          onclick="captureDriverPhoto()"
+        >
+          📸 AMBIL FOTO
+        </button>
+
+        <button
+          type="button"
+          class="btn-red"
+          onclick="closePhotoCamera()"
+        >
+          TUTUP
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div id="photoPreviewBox">
+
+      <img
+        id="photoPreview"
+        alt="Foto Driver"
+      >
+
+      <button
+        type="button"
+        class="btn-orange"
+        style="margin-top:8px;"
+        onclick="openPhotoCamera()"
+      >
+        🔄 FOTO ULANG
+      </button>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <!-- SCAN AWB -->
+
+    <div class="section-title">
+      SCAN AWB
+    </div>
+
+
+    <div class="scan-buttons">
+
+      <button
+        type="button"
+        class="btn-dark"
+        id="btnStartScanner"
+        onclick="startScanner()"
+      >
+        📷 MULAI SCAN AWB
+      </button>
+
+
+      <button
+        type="button"
+        class="btn-red"
+        id="btnStopScanner"
+        onclick="stopScanner()"
+        style="display:none;"
+      >
+        ⛔ STOP SCANNER
+      </button>
+
+    </div>
+
+
+    <div id="reader"></div>
+
+
+    <div class="counter-row">
+
+      <div
+        class="counter"
+        id="awbCounter"
+      >
+        0 AWB
+      </div>
+
+      <button
+        type="button"
+        class="clear"
+        onclick="clearAwbs()"
+      >
+        Hapus Semua
+      </button>
+
+    </div>
+
+
+    <div
+      class="awb-list"
+      id="awbList"
+    >
+
+      <div class="empty">
+        Belum ada AWB yang discan.
+      </div>
+
+    </div>
+
+
+    <div class="divider"></div>
+
+
+    <button
+      type="button"
+      class="btn-green"
+      id="btnSave"
+      onclick="saveData()"
+    >
+      💾 SIMPAN SEMUA DATA
+    </button>
+
+
+    <div
+      id="status"
+      class="status"
+    ></div>
+
+  </div>
+
+
+  <div class="footer">
+    H JOEL LOGISTICS • SCAN OUTBOUND
+  </div>
+
+</div>
+
+
+<script>
+
+const API_URL =
+'https://script.google.com/macros/s/AKfycbwvSTmZkm9CGrEW3kJG8Du_THFSNX0fE49y97wElfXzANkfewhp-LuMtyPqZD8P4DWwCg/exec';
+
+
+let scanner = null;
+let scannedAwbs = [];
+let scanLock = false;
+
+let photoStream = null;
+let photoBase64 = '';
+
+let audioContext = null;
+
+
+/* ============================================
+START
+============================================ */
+
+document.addEventListener(
+  'DOMContentLoaded',
+  function() {
+
+    setToday();
+    loadVendors();
+
+  }
+);
+
+
+function setToday() {
+
+  const now = new Date();
+
+  const y =
+    now.getFullYear();
+
+  const m =
+    String(
+      now.getMonth() + 1
+    ).padStart(2,'0');
+
+  const d =
+    String(
+      now.getDate()
+    ).padStart(2,'0');
+
+  document.getElementById(
+    'tanggalPickup'
+  ).value =
+    y + '-' + m + '-' + d;
+}
+
+
+/* ============================================
+VENDOR
+============================================ */
+
+function loadVendors() {
+
+  const callbackName =
+    'vendorCallback_' +
+    Date.now();
+
+
+  const script =
+    document.createElement(
+      'script'
+    );
+
+
+  window[callbackName] =
+    function(result) {
+
+      const select =
+        document.getElementById(
+          'vendor'
+        );
+
+      select.innerHTML =
+        '<option value="">-- Pilih Vendor --</option>';
+
+
+      if (
+        result &&
+        result.success &&
+        Array.isArray(
+          result.vendors
+        )
+      ) {
+
+        result.vendors.forEach(
+          function(vendor) {
+
+            const option =
+              document.createElement(
+                'option'
+              );
+
+            option.value =
+              vendor;
+
+            option.textContent =
+              vendor;
+
+            select.appendChild(
+              option
+            );
+
+          }
+        );
+
+      } else {
+
+        showStatus(
+          result?.message ||
+          'Vendor gagal dimuat.',
+          'error'
+        );
+
+      }
+
+
+      delete window[
+        callbackName
+      ];
+
+
+      script.remove();
+
+    };
+
+
+  script.onerror =
+    function() {
+
+      const select =
+        document.getElementById(
+          'vendor'
+        );
+
+      select.innerHTML =
+        '<option value="">Vendor gagal dimuat</option>';
+
+      showStatus(
+        'Vendor gagal dimuat. Pastikan Apps Script sudah deploy versi terbaru.',
+        'error'
+      );
+
+    };
+
+
+  script.src =
+    API_URL +
+    '?action=getVendors' +
+    '&callback=' +
+    callbackName +
+    '&nocache=' +
+    Date.now();
+
+
+  document.body.appendChild(
+    script
+  );
+
+}
+
+
+/* ============================================
+KAMERA FOTO DRIVER
+============================================ */
+
+async function openPhotoCamera() {
+
+  clearStatus();
+
+  /*
+  Scanner harus dimatikan dulu
+  karena HP biasanya tidak bisa memakai
+  kamera untuk dua proses sekaligus.
+  */
+  if (scanner) {
+    await stopScanner();
+  }
+
+
+  /*
+  Tutup stream foto lama.
+  */
+  closePhotoCamera();
+
+
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+
+    showStatus(
+      'Browser tidak mendukung kamera langsung.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  try {
+
+    photoStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+
+          video: {
+            facingMode: {
+              ideal: 'environment'
+            }
+          },
+
+          audio: false
+
+        });
+
+
+    const video =
+      document.getElementById(
+        'photoVideo'
+      );
+
+
+    video.srcObject =
+      photoStream;
+
+
+    await video.play();
+
+
+    document.getElementById(
+      'photoCameraBox'
+    ).style.display =
+      'block';
+
+
+    document.getElementById(
+      'btnOpenPhoto'
+    ).style.display =
+      'none';
+
+
+    showStatus(
+      'Kamera Driver aktif.',
+      'info'
+    );
+
+
+  } catch(error) {
+
+    console.error(error);
+
+
+    showStatus(
+      'Kamera tidak dapat dibuka. Izinkan akses kamera pada Chrome.',
+      'error'
+    );
+
+  }
+
+}
+
+
+function captureDriverPhoto() {
+
+  const video =
+    document.getElementById(
+      'photoVideo'
+    );
+
+
+  if (
+    !video.videoWidth ||
+    !video.videoHeight
+  ) {
+
+    showStatus(
+      'Kamera belum siap. Tunggu sebentar.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  const canvas =
+    document.createElement(
+      'canvas'
+    );
+
+
+  let width =
+    video.videoWidth;
+
+  let height =
+    video.videoHeight;
+
+
+  const maxWidth =
+    1280;
+
+
+  if (width > maxWidth) {
+
+    height =
+      Math.round(
+        height *
+        maxWidth /
+        width
+      );
+
+    width =
+      maxWidth;
+  }
+
+
+  canvas.width =
+    width;
+
+  canvas.height =
+    height;
+
+
+  const ctx =
+    canvas.getContext(
+      '2d'
+    );
+
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    width,
+    height
+  );
+
+
+  photoBase64 =
+    canvas.toDataURL(
+      'image/jpeg',
+      0.72
+    );
+
+
+  document.getElementById(
+    'photoPreview'
+  ).src =
+    photoBase64;
+
+
+  document.getElementById(
+    'photoPreviewBox'
+  ).style.display =
+    'block';
+
+
+  closePhotoCamera();
+
+
+  showStatus(
+    '✅ Foto Driver berhasil diambil.',
+    'success'
+  );
+
+}
+
+
+function closePhotoCamera() {
+
+  if (photoStream) {
+
+    photoStream
+      .getTracks()
+      .forEach(
+        function(track) {
+          track.stop();
+        }
+      );
+
+    photoStream =
+      null;
+  }
+
+
+  const video =
+    document.getElementById(
+      'photoVideo'
+    );
+
+
+  if (video) {
+    video.srcObject =
+      null;
+  }
+
+
+  document.getElementById(
+    'photoCameraBox'
+  ).style.display =
+    'none';
+
+
+  document.getElementById(
+    'btnOpenPhoto'
+  ).style.display =
+    'block';
+
+}
+
+
+/* ============================================
+SCANNER AWB
+============================================ */
+
+async function startScanner() {
+
+  clearStatus();
+
+
+  /*
+  Aktifkan audio melalui klik pengguna.
+  Ini penting agar Chrome mengizinkan beep.
+  */
+  try {
+
+    if (!audioContext) {
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+
+    if (
+      audioContext.state ===
+      'suspended'
+    ) {
+
+      await audioContext.resume();
+
+    }
+
+  } catch(error) {
+    console.log(error);
+  }
+
+
+  closePhotoCamera();
+
+
+  if (scanner) {
+    return;
+  }
+
+
+  try {
+
+    const cameras =
+      await Html5Qrcode.getCameras();
+
+
+    if (
+      !cameras ||
+      cameras.length === 0
+    ) {
+
+      throw new Error(
+        'Kamera tidak ditemukan.'
+      );
+
+    }
+
+
+    let cameraId =
+      cameras[
+        cameras.length - 1
+      ].id;
+
+
+    const rearCamera =
+      cameras.find(
+        camera =>
+          /back|rear|environment/i
+            .test(camera.label)
+      );
+
+
+    if (rearCamera) {
+
+      cameraId =
+        rearCamera.id;
+
+    }
+
+
+    scanner =
+      new Html5Qrcode(
+        'reader'
+      );
+
+
+    await scanner.start(
+
+      cameraId,
+
+      {
+        fps: 12,
+
+        qrbox:
+          function(
+            width,
+            height
+          ) {
+
+            let boxWidth =
+              Math.floor(
+                width * 0.90
+              );
+
+            if (
+              boxWidth > 380
+            ) {
+              boxWidth = 380;
+            }
+
+            return {
+              width: boxWidth,
+              height: 140
+            };
+
+          }
+      },
+
+      onScanSuccess,
+
+      function() {}
+
+    );
+
+
+    document.getElementById(
+      'btnStartScanner'
+    ).style.display =
+      'none';
+
+
+    document.getElementById(
+      'btnStopScanner'
+    ).style.display =
+      'block';
+
+
+    showStatus(
+      'Scanner aktif. Arahkan barcode AWB ke kotak kamera.',
+      'info'
+    );
+
+
+  } catch(error) {
+
+    console.error(error);
+
+
+    scanner =
+      null;
+
+
+    showStatus(
+      'Scanner gagal dibuka. Pastikan izin kamera Chrome aktif.',
+      'error'
+    );
+
+  }
+
+}
+
+
+function onScanSuccess(
+  decodedText
+) {
+
+  if (scanLock) {
+    return;
+  }
+
+
+  const awb =
+    String(
+      decodedText || ''
+    ).trim();
+
+
+  if (!awb) {
+    return;
+  }
+
+
+  scanLock =
+    true;
+
+
+  if (
+    scannedAwbs.includes(
+      awb
+    )
+  ) {
+
+    duplicateSound();
+
+    vibrateDuplicate();
+
+
+    showStatus(
+      '⚠ AWB sudah pernah discan: ' +
+      awb,
+      'error'
+    );
+
+
+  } else {
+
+    scannedAwbs.push(
+      awb
+    );
+
+
+    renderAwbs();
+
+
+    scanSound();
+
+
+    if (
+      navigator.vibrate
+    ) {
+
+      navigator.vibrate(
+        130
+      );
+
+    }
+
+
+    showStatus(
+      '✅ SCAN BERHASIL: ' +
+      awb,
+      'success'
+    );
+
+  }
+
+
+  setTimeout(
+    function() {
+
+      scanLock =
+        false;
+
+    },
+    1000
+  );
+
+}
+
+
+async function stopScanner() {
+
+  if (!scanner) {
+    return;
+  }
+
+
+  try {
+
+    await scanner.stop();
+
+    scanner.clear();
+
+  } catch(error) {
+    console.log(error);
+  }
+
+
+  scanner =
+    null;
+
+
+  document.getElementById(
+    'btnStartScanner'
+  ).style.display =
+    'block';
+
+
+  document.getElementById(
+    'btnStopScanner'
+  ).style.display =
+    'none';
+
+}
+
+
+/* ============================================
+SUARA
+============================================ */
+
+function scanSound() {
+
+  try {
+
+    if (!audioContext) {
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+
+    const oscillator =
+      audioContext
+        .createOscillator();
+
+
+    const gain =
+      audioContext
+        .createGain();
+
+
+    oscillator.connect(
+      gain
+    );
+
+
+    gain.connect(
+      audioContext.destination
+    );
+
+
+    oscillator.type =
+      'sine';
+
+
+    oscillator.frequency
+      .setValueAtTime(
+        1100,
+        audioContext.currentTime
+      );
+
+
+    gain.gain
+      .setValueAtTime(
+        0.32,
+        audioContext.currentTime
+      );
+
+
+    gain.gain
+      .exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime +
+        0.16
+      );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+      audioContext.currentTime +
+      0.17
+    );
+
+
+  } catch(error) {
+    console.log(error);
+  }
+
+}
+
+
+function duplicateSound() {
+
+  try {
+
+    if (!audioContext) {
+      return;
+    }
+
+
+    const oscillator =
+      audioContext
+        .createOscillator();
+
+
+    const gain =
+      audioContext
+        .createGain();
+
+
+    oscillator.connect(
+      gain
+    );
+
+
+    gain.connect(
+      audioContext.destination
+    );
+
+
+    oscillator.frequency.value =
+      350;
+
+
+    gain.gain.value =
+      0.20;
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+      audioContext.currentTime +
+      0.22
+    );
+
+
+  } catch(error) {}
+
+}
+
+
+function vibrateDuplicate() {
+
+  if (
+    navigator.vibrate
+  ) {
+
+    navigator.vibrate([
+      100,
+      70,
+      100
+    ]);
+
+  }
+
+}
+
+
+/* ============================================
+DAFTAR AWB
+============================================ */
+
+function renderAwbs() {
+
+  const list =
+    document.getElementById(
+      'awbList'
+    );
+
+
+  const counter =
+    document.getElementById(
+      'awbCounter'
+    );
+
+
+  counter.textContent =
+    scannedAwbs.length +
+    ' AWB';
+
+
+  if (
+    scannedAwbs.length === 0
+  ) {
+
+    list.innerHTML =
+      '<div class="empty">Belum ada AWB yang discan.</div>';
+
+    return;
+  }
+
+
+  list.innerHTML =
+    '';
+
+
+  scannedAwbs.forEach(
+    function(
+      awb,
+      index
+    ) {
+
+      const row =
+        document.createElement(
+          'div'
+        );
+
+
+      row.className =
+        'awb-item';
+
+
+      const text =
+        document.createElement(
+          'div'
+        );
+
+
+      text.className =
+        'awb-number';
+
+
+      text.textContent =
+        (index + 1) +
+        '. ' +
+        awb;
+
+
+      const del =
+        document.createElement(
+          'button'
+        );
+
+
+      del.type =
+        'button';
+
+
+      del.className =
+        'delete';
+
+
+      del.textContent =
+        'Hapus';
+
+
+      del.onclick =
+        function() {
+
+          scannedAwbs.splice(
+            index,
+            1
+          );
+
+          renderAwbs();
+
+        };
+
+
+      row.appendChild(
+        text
+      );
+
+
+      row.appendChild(
+        del
+      );
+
+
+      list.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+function clearAwbs() {
+
+  if (
+    scannedAwbs.length === 0
+  ) {
+    return;
+  }
+
+
+  if (
+    !confirm(
+      'Hapus semua AWB yang sudah discan?'
+    )
+  ) {
+    return;
+  }
+
+
+  scannedAwbs =
+    [];
+
+
+  renderAwbs();
+
+}
+
+
+/* ============================================
+SIMPAN
+============================================ */
+
+async function saveData() {
+
+  clearStatus();
+
+
+  const tanggal =
+    document.getElementById(
+      'tanggalPickup'
+    ).value;
+
+
+  const driver =
+    document.getElementById(
+      'namaDriver'
+    ).value.trim();
+
+
+  const plat =
+    document.getElementById(
+      'platNo'
+    ).value.trim();
+
+
+  const vendor =
+    document.getElementById(
+      'vendor'
+    ).value;
+
+
+  if (!tanggal) {
+
+    showStatus(
+      'Tanggal Pick Up wajib diisi.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  if (!driver) {
+
+    showStatus(
+      'Nama Driver wajib diisi.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  if (!plat) {
+
+    showStatus(
+      'Plat No wajib diisi.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  if (!vendor) {
+
+    showStatus(
+      'Vendor wajib dipilih.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  if (!photoBase64) {
+
+    showStatus(
+      'Foto Driver wajib diambil.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  if (
+    scannedAwbs.length === 0
+  ) {
+
+    showStatus(
+      'Belum ada AWB yang discan.',
+      'error'
+    );
+
+    return;
+  }
+
+
+  const btn =
+    document.getElementById(
+      'btnSave'
+    );
+
+
+  btn.disabled =
+    true;
+
+
+  btn.textContent =
+    '⏳ MENYIMPAN...';
+
+
+  try {
+
+    if (scanner) {
+      await stopScanner();
+    }
+
+
+    closePhotoCamera();
+
+
+    const payload = {
+
+      action:
+        'save',
+
+      tanggalPickup:
+        tanggal,
+
+      namaDriver:
+        driver,
+
+      platNo:
+        plat,
+
+      vendor:
+        vendor,
+
+      awbs:
+        scannedAwbs,
+
+      fotoDriver:
+        photoBase64
+
+    };
+
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+
+      );
+
+
+    const text =
+      await response.text();
+
+
+    const result =
+      JSON.parse(
+        text
+      );
+
+
+    if (
+      !result.success
+    ) {
+
+      throw new Error(
+        result.message ||
+        'Gagal menyimpan data.'
+      );
+
+    }
+
+
+    showStatus(
+      '✅ ' +
+      result.jumlah +
+      ' AWB BERHASIL DISIMPAN',
+      'success'
+    );
+
+
+    scannedAwbs =
+      [];
+
+
+    renderAwbs();
+
+
+    photoBase64 =
+      '';
+
+
+    document.getElementById(
+      'photoPreviewBox'
+    ).style.display =
+      'none';
+
+
+  } catch(error) {
+
+    console.error(error);
+
+
+    showStatus(
+      '❌ Gagal menyimpan: ' +
+      error.message,
+      'error'
+    );
+
+  }
+
+
+  btn.disabled =
+    false;
+
+
+  btn.textContent =
+    '💾 SIMPAN SEMUA DATA';
+
+}
+
+
+/* ============================================
+STATUS
+============================================ */
+
+function showStatus(
+  message,
+  type
+) {
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  status.className =
+    'status ' +
+    type;
+
+
+  status.textContent =
+    message;
+
+}
+
+
+function clearStatus() {
+
+  const status =
+    document.getElementById(
+      'status'
+    );
+
+
+  status.className =
+    'status';
+
+
+  status.textContent =
+    '';
+
+}
+
+</script>
+
+</body>
+</html>
